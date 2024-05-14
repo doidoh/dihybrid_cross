@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dihybrid Cross Punnett Square</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+        }
+        input {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .center {
+            text-align: center;
+        }
+        .correct {
+            background-color: lightgreen;
+        }
+        .wrong {
+            background-color: lightcoral;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="center">Dihybrid Cross Punnett Square</h1>
+    <div class="center">
+        <label>Parent 1 Genotype (e.g., RrYy): <input type="text" id="parent1" maxlength="4"></label>
+        <br><br>
+        <label>Parent 2 Genotype (e.g., RrYy): <input type="text" id="parent2" maxlength="4"></label>
+        <br><br>
+        <button onclick="generatePunnettSquare()">Generate Punnett Square</button>
+        <button onclick="checkAnswers()">Check Answers</button>
+    </div>
+    <br>
+    <table id="punnettSquare" class="center"></table>
+
+    <script>
+        function generatePunnettSquare() {
+            const parent1 = document.getElementById('parent1').value;
+            const parent2 = document.getElementById('parent2').value;
+
+            if (parent1.length !== 4 || parent2.length !== 4) {
+                alert('Please enter valid genotypes (e.g., RrYy)');
+                return;
+            }
+
+            const p1Gametes = generateGametes(parent1);
+            const p2Gametes = generateGametes(parent2);
+
+            const table = document.getElementById('punnettSquare');
+            table.innerHTML = '';
+
+            let headerRow = '<tr><th></th>';
+            for (let i = 0; i < 4; i++) {
+                headerRow += `<th>${p1Gametes[i]}</th>`;
+            }
+            headerRow += '</tr>';
+            table.innerHTML += headerRow;
+
+            for (let i = 0; i < 4; i++) {
+                let row = `<tr><th>${p2Gametes[i]}</th>`;
+                for (let j = 0; j < 4; j++) {
+                    row += `<td><input type="text" maxlength="4" data-correct="${combineGametes(p1Gametes[j], p2Gametes[i])}"></td>`;
+                }
+                row += '</tr>';
+                table.innerHTML += row;
+            }
+        }
+
+        function generateGametes(genotype) {
+            const gametes = [];
+            const gene1 = [genotype[0], genotype[1]];
+            const gene2 = [genotype[2], genotype[3]];
+
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 2; j++) {
+                    gametes.push(gene1[i] + gene2[j]);
+                }
+            }
+
+            return gametes;
+        }
+
+        function combineGametes(gamete1, gamete2) {
+            const combined = gamete1[0] + gamete2[0] + gamete1[1] + gamete2[1];
+            return combined.split('').sort().join('');
+        }
+
+        function checkAnswers() {
+            const inputs = document.querySelectorAll('#punnettSquare input');
+            inputs.forEach(input => {
+                const userInput = input.value.split('').sort().join('');
+                const correctAnswer = input.dataset.correct.split('').sort().join('');
+                if (userInput === correctAnswer) {
+                    input.classList.add('correct');
+                    input.classList.remove('wrong');
+                } else {
+                    input.classList.add('wrong');
+                    input.classList.remove('correct');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
